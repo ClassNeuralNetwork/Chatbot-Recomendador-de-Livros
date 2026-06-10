@@ -12,8 +12,15 @@ st.set_page_config(page_title="Recomenda AI - Livros", page_icon="📚")
 st.title("📖 Recomenda AI - Livros")
 st.write("Conversando com um chatbot especialista em recomendação de livros!")
 
-# inicializando o client da API do groq usando a chave do .env
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+# Tenta pegar do st.secrets primeiro (ambiente de deploy Streamlit)
+# Se não encontrar, tenta pegar do os.getenv (ambiente local com .env)
+try:
+    api_key = st.secrets["GROQ_API_KEY"]
+except (KeyError, FileNotFoundError):
+    api_key = os.getenv("GROQ_API_KEY")
+
+# inicializando o client da API do groq
+client = Groq(api_key=api_key)
 
 # Prompt de sistema: definindo a persona e o domínio de geração do chatbot
 SYSTEM_PROMPT = (
